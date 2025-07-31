@@ -1,2 +1,2 @@
-# hackertool-simulator
+# HackerTool
 A functional hacking simulator. 
