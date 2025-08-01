@@ -29,16 +29,6 @@ To download updates before v1.4.1, please visit [here](https://github.com/User45
 
 ## 🚀 Getting Started
 
-### 🔧 Requirements
-
-- Windows 10+
-- Python 3.8+
-- Installed modules:
-  - `colorama`
-  - `msvcrt` (built-in on Windows)
-
----
-
 ### 📝 Usage
 
 1. **Run the compiled EXE**
@@ -78,7 +68,7 @@ If a newer `hackertool.exe` is published on the linked GitHub repository, the ap
 
 **GitHub Release API endpoint:**
 ```
-https://api.github.com/repos/User4534503/hackertool/releases/latest
+https://api.github.com/repos/SuperGamer474/hackertool-simulator/releases/latest
 ```
 
 ---
