@@ -9,6 +9,11 @@ To download updates before v1.4.1, please visit [here](https://github.com/User45
 
 ---
 
+##  😎 Install HackerTool
+- Download the latest release [here](https://github.com/SuperGamer474/hackertool-simulator/releases/latest)!
+
+---
+
 ## 📦 Features
 
 - 🎯 **Arrow-Key Menu Navigation** with Color Output  
