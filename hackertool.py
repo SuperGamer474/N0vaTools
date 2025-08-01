@@ -11,10 +11,27 @@ import msvcrt
 import zipfile
 import winreg
 import ctypes
+import re
 init()
+real_stdout = sys.__stdout__
 
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def get_prefix_from_ipconfig(ip):
+    try:
+        output = subprocess.check_output("ipconfig", encoding="utf-8")
+        # Find the subnet mask for the line that contains your IP
+        pattern = rf"IPv4 Address.*?: {re.escape(ip)}.*?Subnet Mask.*?: ([\d.]+)"
+        match = re.search(pattern, output, re.DOTALL)
+        if match:
+            mask = match.group(1)
+            # Convert subnet mask (e.g., 255.255.240.0) to CIDR (e.g., 20)
+            prefix = sum(bin(int(octet)).count("1") for octet in mask.split('.'))
+            return prefix
+    except Exception as e:
+        print(f"⚠️ Failed to get subnet mask: {e}")
+    return 24  # fallback
 
 def input_password(prompt="Please enter the password: "):
     print(prompt, end='', flush=True)
@@ -349,13 +366,14 @@ def loadHackingTerminal():
             if not local_ip:
                 continue
             
-            subnet = ipaddress.ip_network(f"{local_ip}/24", strict=False)
+            prefix = get_prefix_from_ipconfig(local_ip)
+            subnet = ipaddress.ip_network(f"{local_ip}/{prefix}", strict=False)
             hosts = [str(h) for h in subnet.hosts()]
             total_hosts = len(hosts)
             sys.stdout.write(f"Scanning WiFi for '{code}'...\n")
 
             found = False
-            with concurrent.futures.ThreadPoolExecutor(max_workers=total_hosts) as executor:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
                 future_to_ip = {executor.submit(ping, ip): ip for ip in hosts}
                 with tqdm(total=total_hosts, unit="ip", desc="Scanning", ascii=False, leave=False) as pbar:
                     for future in concurrent.futures.as_completed(future_to_ip):
