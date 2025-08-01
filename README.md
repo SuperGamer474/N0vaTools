@@ -57,7 +57,6 @@ To download updates before v1.4.1, please visit [here](https://github.com/User45
 - `cd [dir]` — Change directory (only within `~/hacking-terminal`)
 - `mkdir <name>` — Make a new directory
 - `scan <name>` — Scans your local network for devices whose hostnames contain `<name>`.
-  Uses multi-threaded ping sweeps and reverse DNS lookups to find matching devices on your network.  
 - `colour <name>` — Change prompt/output color  
   Available colors: `red`, `orange`, `yellow`, `green`, `blue`, `purple`, `pink`, `white`, `black`, `grey`, `default`
 - `exit` / `quit` — Exit terminal
