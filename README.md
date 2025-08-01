@@ -4,6 +4,11 @@
 
 ---
 
+##  🤠 Updates before 1.4.1
+To download updates before v1.4.1, please visit [here](https://github.com/User4534503/hackertool/releases).
+
+---
+
 ## 📦 Features
 
 - 🎯 **Arrow-Key Menu Navigation** with Color Output  
