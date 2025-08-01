@@ -58,7 +58,7 @@ def auto_update():
 timeout /t 2 /nobreak >nul
 del "{old_name}"
 ren "{new_name}" "{old_name}"
-start "" "{old_name}"
+start "" "hackertool.exe"
 del "%~f0"
 """
         with open(bat_path, "w") as bat:
