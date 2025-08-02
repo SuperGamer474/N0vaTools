@@ -8,22 +8,22 @@ import subprocess
 
 def auto_update():
     """
-    Downloads the latest hackertool.exe from the GitHub Releases API,
+    Downloads the latest N0vaTools.exe from the GitHub Releases API,
     compares SHA256 hashes, and if different,
     swaps in the new version and restarts.
     """
     # 1️⃣ Query the GitHub API for the latest release
-    api_url = "https://api.github.com/repos/SuperGamer474/hackertool-simulator/releases/latest"
+    api_url = "https://api.github.com/repos/SuperGamer474/N0vaTools/releases/latest"
     req = urllib.request.Request(api_url, headers={
-        "User-Agent": "HackerTool-Updater",
+        "User-Agent": "N0vaTools-Updater",
         "Accept": "application/vnd.github.v3+json"
     })
     with urllib.request.urlopen(req) as resp:
         release_info = json.load(resp)
 
-    # 2️⃣ Find the hackertool.exe asset
+    # 2️⃣ Find the N0vaTools.exe asset
     assets = release_info.get("assets", [])
-    exe_asset = next((a for a in assets if a.get("name") == "hackertool.exe"), None)
+    exe_asset = next((a for a in assets if a.get("name") == "N0vaTools.exe"), None)
     if not exe_asset:
         print("⚠️ There was an error while updating!")
         return
@@ -58,7 +58,7 @@ def auto_update():
 timeout /t 2 /nobreak >nul
 del "{old_name}"
 ren "{new_name}" "{old_name}"
-start "" "hackertool.exe"
+start "" "N0vaTools.exe"
 del "%~f0"
 """
         with open(bat_path, "w") as bat:
