@@ -3,6 +3,7 @@ import sys
 import msvcrt
 from colorama import Fore, Style
 from scan import scan
+from ports import portscan
 
 # ========= Hacking Terminal =========
 def loadHackingTerminal():
@@ -167,6 +168,15 @@ def loadHackingTerminal():
                 sys.stdout.write(f"🎉 Success! {ip} → {name}!\n")
             else:
                 sys.stdout.write(f"😅 '{code}' was not found!\n")
+            continue
+
+        # portscan command
+        if cmd == 'portscan':
+            if len(parts) < 2:
+                sys.stdout.write("Usage: portscan <ip>\n")
+                continue
+            theIP = parts[1].strip()
+            portscan(theIP)
             continue
 
         # unknown command
