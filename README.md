@@ -1,11 +1,11 @@
-# 🛠️ HackerTool
+# 🛠️ N0vaTools
 
-**HackerTool** is a Windows-based terminal utility written in Python. It includes a stylized menu system, an interactive "Hacking Terminal" shell, built-in app installers (e.g., Java), and a self-update feature using GitHub Releases.
+**N0vaTools** is a Windows-based terminal utility written in Python. It includes a stylized menu system, an interactive "Hacking Terminal" shell, built-in app installers (e.g., Java), and a self-update feature using GitHub Releases.
 
 ---
 
-##  😎 Install HackerTool
-- Download the latest release [here](https://github.com/SuperGamer474/hackertool-simulator/releases/latest)!
+##  😎 Install N0vaTools
+- Download the latest release [here](https://github.com/SuperGamer474/N0vaTools/releases/latest)!
 
 ---
 
@@ -38,7 +38,7 @@
    - **Install apps** → Install Java 21
    - **UEN v1** → Coming Soon
    - **Hacking Terminal** → Launch interactive shell
-   - **Quit** → Exit HackerTool
+   - **Quit** → Exit N0vaTools
 
 ---
 
@@ -56,7 +56,7 @@
 
 ## 🔄 Auto-Updating
 
-If a newer `hackertool.exe` is published on the linked GitHub repository, the app will:
+If a newer `N0vaTools.exe` is published on the linked GitHub repository, the app will:
 - Download the EXE to a temp location
 - Verify it with SHA256
 - Replace the running executable with the new one
@@ -64,7 +64,7 @@ If a newer `hackertool.exe` is published on the linked GitHub repository, the ap
 
 **GitHub Release API endpoint:**
 ```
-https://api.github.com/repos/SuperGamer474/hackertool-simulator/releases/latest
+https://api.github.com/repos/SuperGamer474/N0vaTools/releases/latest
 ```
 
 ---
