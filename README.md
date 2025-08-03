@@ -1,11 +1,15 @@
 # 🛠️ N0vaTools
+![Discontinued](https://img.shields.io/badge/Discontinued-August%202025-red)
 
 **N0vaTools** is a Windows-based terminal utility written in Python. It includes a stylized menu system, an interactive "Hacking Terminal" shell, built-in app installers (e.g., Java), and a self-update feature using GitHub Releases.
 
 ---
 
-> ⚠️ **This project is no longer maintained and is officially discontinued.**
-> Please use [N0vaCommand](https://github.com/SuperGamer474/N0vaCommand) instead.
+## ⚠️ Project Discontinued — August 2025
+
+This project is no longer maintained and will receive no further updates or support.
+
+Please use [N0vaCommand](https://github.com/SuperGamer474/N0vaCommand) instead — it offers all the same features, plus more.
 
 ---
 
