@@ -4,6 +4,11 @@
 
 ---
 
+> ⚠️ **This project is no longer maintained and is officially discontinued.**
+> Please use [N0vaCommand](https://github.com/SuperGamer474/N0vaCommand) instead.
+
+---
+
 ##  😎 Install N0vaTools
 - Download the latest release [here](https://github.com/SuperGamer474/N0vaTools/releases/latest)!
 
