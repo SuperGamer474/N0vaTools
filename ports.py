@@ -8,24 +8,57 @@ COMMON_PORTS = list(range(1, 65536))
 
 # Fallback map for common ports (likely services)
 SERVICE_MAP = {
-    21: "ftp",
-    22: "ssh",
-    23: "telnet",
-    25: "smtp",
-    53: "dns",
-    80: "http",
-    110: "pop3",
-    135: "msrpc",
-    139: "netbios-ssn",
-    143: "imap",
-    443: "https",
-    445: "microsoft-ds",
-    3389: "ms-wbt-server",
-    3306: "mysql",
-    5432: "postgresql",
-    5900: "vnc",
-    8000: "http",
-    8080: "http"
+    20: "ftp-data",          # Official IANA
+    21: "ftp",               # Official IANA
+    22: "ssh",               # Official IANA (SFTP runs over SSH here!)
+    23: "telnet",            # Official IANA
+    25: "smtp",              # Official IANA
+    43: "whois",             # Official IANA
+    53: "domain",            # Official IANA (DNS)
+    67: "bootps",            # Official IANA (DHCP server)
+    68: "bootpc",            # Official IANA (DHCP client)
+    69: "tftp",              # Official IANA
+    79: "finger",            # Official IANA
+    80: "http",              # Official IANA
+    110: "pop3",             # Official IANA
+    # 115 reserved, no official assignment
+    119: "nntp",             # Official IANA
+    123: "ntp",              # Official IANA
+    137: "netbios-ns",       # Official IANA
+    138: "netbios-dgm",      # Official IANA
+    139: "netbios-ssn",      # Official IANA
+    389: "ldap",             # Official IANA
+    443: "https",            # Official IANA
+    445: "microsoft-ds",     # Official IANA
+    465: "smtps",            # Official IANA (secure SMTP)
+    587: "submission",       # Official IANA (modern SMTP submission)
+    636: "ldaps",            # Official IANA (secure LDAP)
+    # 689 unassigned by IANA
+    989: "ftps-data",        # Official IANA (FTP over TLS/SSL data)
+    990: "ftps",             # Official IANA (FTP over TLS/SSL control)
+    992: "telnets",          # Official IANA (Telnet over TLS/SSL)
+    993: "imaps",            # Official IANA (IMAP over SSL)
+    995: "pop3s",            # Official IANA (POP3 over SSL)
+    1433: "ms-sql-s",        # Microsoft SQL Server (commonly used)
+    1434: "ms-sql-m",        # Microsoft SQL Server (commonly used)
+    1521: "oracle",          # Oracle DB default port (common usage)
+    1723: "pptp",            # Official IANA (VPN protocol)
+    2049: "nfs",             # Official IANA (Network File System)
+    3306: "mysql",           # Official IANA
+    3389: "ms-wbt-server",   # Official IANA (RDP)
+    5432: "postgresql",      # Official IANA
+    5900: "vnc",             # Official IANA
+    6379: "redis",           # Popular, not IANA assigned
+    8000: "http-alt",        # Common unofficial HTTP alt port
+    8080: "http-alt",        # Common unofficial HTTP alt port
+    8443: "https-alt",       # Common unofficial HTTPS alt port
+    8888: "http-alt",        # Common unofficial HTTP alt port
+    27017: "mongodb",        # Popular, not IANA assigned
+    # The following are NOT officially assigned by IANA but widely used:
+    9000: "sonarqube",       # SonarQube web UI port
+    9090: "webmin/prometheus", # Webmin or Prometheus web UI port
+    10000: "webmin",         # Webmin web interface port
+    11211: "memcached",      # Memcached port, widely used but unassigned by IANA
 }
 
 def scan_port(target_ip, port, results):
