@@ -7,19 +7,18 @@ import os
 import tempfile
 import hashlib
 import subprocess
-import time
 
 def auto_update():
     """
-    1. Fetches the latest release info from GitHub
-    2. Downloads N0vaTools.exe asset into the same folder but with a temp name
+    1. Fetch latest GitHub release metadata
+    2. Download N0vaTools.exe into a temp file alongside the current EXE
     3. If hashes differ:
-       • Writes an update.bat that deletes the old EXE, starts the new one, then self-deletes
-       • Launches update.bat and exits
-    4. Cleans up if already up-to-date
+       - Write update.bat that deletes old EXE, starts the new one, then self-deletes
+       - Launch update.bat and exit current process
+    4. Clean up temp if already up-to-date
     """
     try:
-        # ── 1. GitHub API call ─────────────────────────────────────────────────────
+        # ── 1. Query GitHub API ────────────────────────────────────────────────────
         api_url = "https://api.github.com/repos/SuperGamer474/N0vaTools/releases/latest"
         req = urllib.request.Request(api_url, headers={
             "User-Agent": "N0vaTools-Updater",
@@ -28,7 +27,7 @@ def auto_update():
         with urllib.request.urlopen(req) as resp:
             release_info = json.load(resp)
 
-        # ── 2. Locate the EXE asset ─────────────────────────────────────────────────
+        # ── 2. Find the EXE asset ───────────────────────────────────────────────────
         assets = release_info.get("assets", [])
         exe_asset = next((a for a in assets if a.get("name") == "N0vaTools.exe"), None)
         if not exe_asset:
@@ -39,13 +38,12 @@ def auto_update():
         base_dir     = os.path.dirname(sys.executable)
         old_name     = os.path.basename(sys.executable)
 
-        # ── 3. Download into a temp file alongside the old EXE ────────────────────────
+        # ── 3. Download remote EXE into temp file ──────────────────────────────────
         fd, tmp_path = tempfile.mkstemp(suffix=".exe", dir=base_dir)
         os.close(fd)
-        print(f"🔽 Downloading new EXE to: {tmp_path}")
         urllib.request.urlretrieve(download_url, tmp_path)
 
-        # ── 4. SHA-256 hash helper ───────────────────────────────────────────────────
+        # ── 4. Hash helper ─────────────────────────────────────────────────────────
         def file_hash(path):
             h = hashlib.sha256()
             with open(path, "rb") as f:
@@ -53,36 +51,25 @@ def auto_update():
                     h.update(chunk)
             return h.hexdigest()
 
-        # ── 5. Compare old vs new ───────────────────────────────────────────────────
-        old_hash = file_hash(sys.executable)
-        new_hash = file_hash(tmp_path)
-        if new_hash != old_hash:
-            print("✨ New update found! Installing… ✨")
-
-            # ── 6. Write the batch updater ────────────────────────────────────────────
+        # ── 5. Compare old vs new ─────────────────────────────────────────────────
+        if file_hash(tmp_path) != file_hash(sys.executable):
+            # New update! Write batch script to swap & launch
             bat_path = os.path.join(base_dir, "update.bat")
             new_name = os.path.basename(tmp_path)
-            bat_contents = f"""
-@echo off
-timeout /t 2 /nobreak >nul
+            bat_contents = f"""@echo off
 del "{old_name}"
 start "" "{new_name}"
 del "%~f0"
 """
-            with open(bat_path, "w") as bat:
-                bat.write(bat_contents.strip())
+            with open(bat_path, "w", encoding="utf-8", errors="ignore") as bat:
+                bat.write(bat_contents)
 
-            # ── 7. Launch the updater script, then exit this process ────────────────
-            subprocess.Popen(
-                ["cmd", "/c", f'"{bat_path}"'],
-                cwd=base_dir,
-                shell=False
-            )
+            # Launch the updater batch file (with proper quoting) and exit
+            subprocess.Popen(f'cmd /c "{bat_path}"', cwd=base_dir, shell=True)
             sys.exit()
 
         else:
-            # ── No update needed ────────────────────────────────────────────────────
-            print("🚀 Already up to date!")
+            # Already up-to-date: just clean up
             os.remove(tmp_path)
 
     except Exception as e:
