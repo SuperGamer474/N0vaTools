@@ -1,5 +1,3 @@
-# updater.py
-
 import urllib.request
 import json
 import sys
@@ -10,87 +8,65 @@ import subprocess
 
 def auto_update():
     """
-    1. Grab latest release metadata from GitHub.
-    2. Download N0vaTools.exe to a temp file in the EXE folder.
-    3. If SHA256 differs:
-         • Write a robust update.bat that waits, deletes, renames, starts, self-destructs.
-         • Launch that batch, then exit the current process.
-       Else:
-         • Delete the temp file and continue.
+    Downloads the latest N0vaTools.exe from the GitHub Releases API,
+    compares SHA256 hashes, and if different,
+    swaps in the new version and restarts.
     """
-    try:
-        # Locate your running EXE
-        if getattr(sys, "frozen", False):
-            app_path = sys.executable
-        else:
-            app_path = os.path.abspath(sys.argv[0])
+    # 1️⃣ Query the GitHub API for the latest release
+    api_url = "https://api.github.com/repos/SuperGamer474/N0vaTools/releases/latest"
+    req = urllib.request.Request(api_url, headers={
+        "User-Agent": "N0vaTools-Updater",
+        "Accept": "application/vnd.github.v3+json"
+    })
+    with urllib.request.urlopen(req) as resp:
+        release_info = json.load(resp)
 
-        base_dir = os.path.dirname(app_path)
-        real_name = os.path.basename(app_path)
+    # 2️⃣ Find the N0vaTools.exe asset
+    assets = release_info.get("assets", [])
+    exe_asset = next((a for a in assets if a.get("name") == "N0vaTools.exe"), None)
+    if not exe_asset:
+        print("⚠️ There was an error while updating!")
+        return
 
-        # 1. GitHub API call
-        api_url = "https://api.github.com/repos/SuperGamer474/N0vaTools/releases/latest"
-        req = urllib.request.Request(api_url, headers={
-            "User-Agent": "N0vaTools-Updater",
-            "Accept": "application/vnd.github.v3+json",
-        })
-        with urllib.request.urlopen(req) as resp:
-            info = json.load(resp)
+    download_url = exe_asset["browser_download_url"]
 
-        # 2. Find the EXE asset
-        asset = next((a for a in info.get("assets", [])
-                      if a.get("name") == real_name), None)
-        if not asset:
-            print("⚠️ No matching asset found!")
-            return
+    # 3️⃣ Download remote EXE to a temp file
+    local_exe = sys.executable  # current running .exe
+    tmp_fd, tmp_path = tempfile.mkstemp(suffix=".exe", dir=os.path.dirname(local_exe))
+    os.close(tmp_fd)
+    urllib.request.urlretrieve(download_url, tmp_path)
 
-        download_url = asset["browser_download_url"]
+    # 4️⃣ Hash helper
+    def file_hash(path):
+        h = hashlib.sha256()
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                h.update(chunk)
+        return h.hexdigest()
 
-        # 3. Download to temp file right next to the real EXE
-        fd, tmp_path = tempfile.mkstemp(suffix=".exe", dir=base_dir)
-        os.close(fd)
-        urllib.request.urlretrieve(download_url, tmp_path)
+    # 5️⃣ Compare hashes
+    if file_hash(tmp_path) != file_hash(local_exe):
+        print("✨ Installing new update... ✨")
+        base_dir = os.path.dirname(local_exe)
+        new_name = os.path.basename(tmp_path)
+        old_name = os.path.basename(local_exe)
+        bat_path = os.path.join(base_dir, "update.bat")
 
-        # 4. Hash helper
-        def sha256(path):
-            h = hashlib.sha256()
-            with open(path, "rb") as f:
-                for chunk in iter(lambda: f.read(8192), b""):
-                    h.update(chunk)
-            return h.hexdigest()
-
-        # 5. Compare; if different, write & launch batch
-        if sha256(tmp_path) != sha256(app_path):
-            bat_path = os.path.join(base_dir, "update.bat")
-            new_name = os.path.basename(tmp_path)
-
-            bat_content = f"""@echo off
-pushd "%~dp0"
-:waitloop
-del "{real_name}" 2>nul || (
-    timeout /t 1 /nobreak >nul
-    goto waitloop
-)
-ren "{new_name}" "{real_name}"
-start "" "{real_name}"
-popd
+        # 6️⃣ Write batch script to swap and restart
+        bat_content = f"""
+@echo off
+timeout /t 2 /nobreak >nul
+del "{old_name}"
+ren "{new_name}" "{old_name}"
+start "" "N0vaTools.exe"
 del "%~f0"
 """
+        with open(bat_path, "w") as bat:
+            bat.write(bat_content.strip())
 
-            with open(bat_path, "w", encoding="utf-8") as bat:
-                bat.write(bat_content)
-
-            # Launch the batch and exit so the old EXE lock is released
-            subprocess.Popen(
-                ["cmd", "/c", bat_path],
-                cwd=base_dir,
-                shell=False
-            )
-            os._exit(0)
-
-        else:
-            # Already latest—cleanup
-            os.remove(tmp_path)
-
-    except Exception as e:
-        print(f"❌ Update failed: {e}")
+        # 7️⃣ Launch the updater and exit
+        subprocess.Popen(["cmd", "/c", bat_path], cwd=base_dir)
+        sys.exit()
+    else:
+        # 🚀 Already up to date
+        os.remove(tmp_path)
