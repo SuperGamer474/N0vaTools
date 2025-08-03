@@ -7,6 +7,7 @@ import os
 import tempfile
 import hashlib
 import subprocess
+import time
 
 def auto_update():
     """
@@ -63,13 +64,9 @@ def auto_update():
             new_name = os.path.basename(tmp_path)
             bat_contents = f"""
 @echo off
-echo 🔄 Running updater in: %cd%
 timeout /t 2 /nobreak >nul
-echo 🗑️  Deleting old: {old_name}
 del "{old_name}"
-echo 🚀 Starting new EXE: {new_name}
 start "" "{new_name}"
-echo 🧹 Cleaning up updater…
 del "%~f0"
 """
             with open(bat_path, "w") as bat:
